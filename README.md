@@ -2,10 +2,12 @@
 
 Клиент для S3-совместимых хранилищ (AWS S3, Yandex Object Storage и т.п.) на базе AWS SDK v2.
 
+**Репозиторий:** https://github.com/aranoy15/go-s3
+
 ## Установка
 
 ```bash
-go get github.com/kjiumus/go-s3
+go get github.com/aranoy15/go-s3
 ```
 
 ## Конфигурация
