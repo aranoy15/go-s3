@@ -30,8 +30,11 @@ if err != nil {
     log.Fatal(err)
 }
 
-// Загрузка файла (возвращает presigned URL)
+// Загрузка файла (возвращает стабильный path-style URL)
 url, err := client.UploadFile(ctx, "objectID", "filename.jpg", body, "image/jpeg")
+
+// Стабильный URL по ключу
+url := client.ObjectURL("path/to/key")
 
 // Presigned URL по ключу
 url, err := client.GetPresignedURL(ctx, "path/to/key", 15*time.Minute)
@@ -45,17 +48,18 @@ err := client.DeleteFile(ctx, "path/to/key")
 // Проверка существования
 exists, err := client.FileExists(ctx, "path/to/key")
 
-// Поиск ключа по presigned URL
-key, err := client.FindKeyByPresignedURL(ctx, presignedURL, "prefix/")
+// Поиск ключа по URL (presigned или path-style)
+key, err := client.FindKeyByPresignedURL(ctx, url, "prefix/")
 ```
 
 ## Методы
 
 - `New(cfg *Config) (*Client, error)` — создание клиента
-- `UploadFile(ctx, objectID, key, body, contentType)` — загрузка, возвращает presigned URL
+- `UploadFile(ctx, objectID, key, body, contentType)` — загрузка, возвращает стабильный ObjectURL
+- `ObjectURL(key)` — стабильный path-style URL объекта
 - `GetPresignedURL(ctx, key, expiration)` — presigned URL для скачивания
 - `GetObjects(ctx, prefix)` — presigned URL всех объектов с префиксом
 - `DeleteFile(ctx, key)` — удаление объекта
 - `FileExists(ctx, key)` — проверка существования
-- `FindKeyByPresignedURL(ctx, url, prefix)` — ключ по presigned URL
+- `FindKeyByPresignedURL(ctx, url, prefix)` — ключ по URL
 - `Bucket()`, `Endpoint()` — имя бакета и endpoint

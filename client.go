@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"strings"
 	"sync"
 	"time"
 
@@ -63,11 +64,14 @@ func (c *Client) UploadFile(ctx context.Context, objectID string, key string, bo
 		return "", fmt.Errorf("failed to upload file to S3: %w", err)
 	}
 
-	presignedURL, err := c.GetPresignedURL(ctx, objectKey, 15*time.Minute)
-	if err != nil {
-		return "", fmt.Errorf("failed to generate presigned URL: %w", err)
-	}
-	return presignedURL, nil
+	return c.ObjectURL(objectKey), nil
+}
+
+// ObjectURL returns a stable path-style object URL (not a short-lived presigned URL).
+func (c *Client) ObjectURL(key string) string {
+	endpoint := strings.TrimRight(c.endpoint, "/")
+	key = strings.TrimLeft(key, "/")
+	return fmt.Sprintf("%s/%s/%s", endpoint, c.bucket, key)
 }
 
 func (c *Client) DeleteFile(ctx context.Context, key string) error {
